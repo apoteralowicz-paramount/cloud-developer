@@ -51,9 +51,8 @@ app.get( "/filteredimage", async (req: Request, res: Response) => {
        }
    }
 
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Authorization');
-    res.sendFile(filteredPath);
+    var files:string[] = new Array(filteredImage);
+    deleteLocalFiles(files);
 });
   
   // Root Endpoint
