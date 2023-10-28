@@ -43,7 +43,7 @@ app.get( "/filteredimage", async (req: Request, res: Response) => {
     if (validate(url) == null) {
         return res.status(400).send('The URL is invalid');
     } else {
-       const filteredImage = filterImageFromURL(url);
+       const filteredImage = await filterImageFromURL(url);
        if (filteredImage === undefined || filteredImage === null) {
            return res.status(400).send('Filtering image unsuccessful');
        } else {
