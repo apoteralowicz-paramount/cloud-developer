@@ -1,6 +1,6 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
 (async () => {
 
@@ -30,6 +30,30 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
+
+function validate(url: string) {
+    return url.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)
+}
+
+app.get( "/filteredimage", async (req: Request, res: Response) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Au
+
+    let url: string = req.query.image_url;
+    if (validate(url) == null) {
+        return res.status(400).send('The URL is invalid');
+    } else {
+       const filteredImage = filterImageFromURL(url);
+       if (filteredImage === undefined || filteredImage === null) {
+           return res.status(400).send('Filtering image unsuccessful');
+       } else {
+           return res.status(200).sendFile(filteredImage+'');
+       }
+   }
+
+    var files:string[] = new Array(filteredImage);
+    deleteLocalFiles(files);
+});
   
   // Root Endpoint
   // Displays a simple message to the user
