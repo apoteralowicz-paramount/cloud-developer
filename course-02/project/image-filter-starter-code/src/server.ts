@@ -37,7 +37,7 @@ function validate(url: string) {
 
 app.get( "/filteredimage", async (req: Request, res: Response) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Au
+    res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Authorization');
 
     let url: string = req.query.image_url;
     if (validate(url) == null) {
