@@ -40,22 +40,34 @@ app.get( "/filteredimage", async (req: Request, res: Response) => {
     res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Authorization');
 
     let url: string = req.query.image_url;
+    if (!url) {
+        res.status(422).send({ err: 'Unprocessable entity: image_url query parameter missing' });
+        return;
+    }
     if (validate(url) == null) {
         return res.status(400).send('The URL is invalid');
     } else {
-       const filteredImage = await filterImageFromURL(url);
-       if (filteredImage === undefined || filteredImage === null) {
-           return res.status(400).send('Filtering image unsuccessful');
-       } else {
-           return res.status(200).sendFile(filteredImage+'');
+        try {
+           const filteredImage = await filterImageFromURL(url);
+           if (filteredImage === undefined || filteredImage === null) {
+               return res.status(400).send('Filtering image unsuccessful');
+           } else {
+               return res.status(200).sendFile(filteredImage+'', err => {
+                   if (err) {
+                       console.log(err);
+                   } else {
+                       var files:string[] = new Array(filteredImage);
+                       deleteLocalFiles(files);
+                   }
+               });
+           }
+       } catch (err) {
+           res.status(500).send({ err, message: `URL: ${ url } ------ Image processing error: ${ err }` });
        }
    }
-
-    var files:string[] = new Array(filteredImage);
-    deleteLocalFiles(files);
 });
   
-  // Root Endpoint
+  // Root Endpointż
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
     res.send("try GET /filteredimage?image_url={{}}")
